@@ -7,7 +7,7 @@ from app.modules.users.model import User
 from app.core.security import verify_password, hash_password, create_access_token
 from app.modules.auth.schema import Token
 
-Incorrect_credentials = HTTPException(
+credentials_exception = HTTPException(
 	status_code=status.HTTP_401_UNAUTHORIZED,
 	detail="incorrect username or password"
 )
@@ -20,9 +20,9 @@ def get_token(user_form: Annotated[OAuth2PasswordRequestForm, Depends()], sessio
 
 	if not userdb:
 		verify_password("incorrect", hash_password("correct"))
-		raise Incorrect_credentials
+		raise credentials_exception
 	if not verify_password(user_form.password, userdb.hashed_password):
-		raise Incorrect_credentials
+		raise credentials_exception
 	return Token(
 		access_token=create_access_token({"sub": userdb.username,}),
 		token_type="bearer"
