@@ -10,3 +10,8 @@ dependencies = [
     "python-dotenv>=1.2.4",
     "sqlmodel>=0.0.50",
 ]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.17.6",
+]
