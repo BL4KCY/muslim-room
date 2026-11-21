@@ -1,0 +1,21 @@
+# General configuration
+line-length = 88
+target-version = "py312"
+indent-width = 2
+
+# Linting rules
+[lint]
+select = [
+    "E",     # Style errors
+    "F",     # Programming mistakes
+    "I",     # Import sorting
+    "B",     # Bug-prone patterns
+    "UP",    # Modern Python syntax
+    "SIM",   # Code simplifications
+    "C4",    # Comprehension improvements
+]
+
+# Formatter configuration
+[format]
+quote-style = "double"
+indent-style = "space"
