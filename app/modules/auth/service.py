@@ -24,6 +24,6 @@ def get_token(user_form: Annotated[OAuth2PasswordRequestForm, Depends()], sessio
 	if not verify_password(user_form.password, userdb.hashed_password):
 		raise credentials_exception
 	return Token(
-		access_token=create_access_token({"sub": userdb.username,}),
+		access_token=create_access_token({"sub": userdb.username, "scopes": user_form.scopes},),
 		token_type="bearer"
 	)
