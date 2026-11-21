@@ -1,5 +1,5 @@
 dev:
-	@uv run fastapi dev
+	@uv run fastapi dev app/app.py --host 0.0.0.0 --port 8000
 
 db:
 	@docker compose up -d

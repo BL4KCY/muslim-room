@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-[#06110e] text-[#f8f5ee] font-tajawal min-h-screen antialiased m-0 p-0;
+    background: radial-gradient(circle at top, #123127 0%, #06110e 70%);
+  }
+
+  input,
+  button,
+  select,
+  textarea {
+    @apply font-tajawal;
+  }
+}

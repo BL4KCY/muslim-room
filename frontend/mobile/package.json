@@ -1,0 +1,28 @@
+{
+  "name": "quran-room-mobile",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "start": "expo start -c --localhost",
+    "tunnel": "expo start -c --tunnel ngrok",
+    "android": "expo start -c --android --localhost",
+    "ios": "expo start -c --ios --localhost",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@react-native/assets-registry": "0.74.87",
+    "expo": "^58.0.23",
+    "expo-asset": "~58.0.20",
+    "expo-font": "~58.0.11",
+    "expo-status-bar": "~58.0.4",
+    "react": "19.3.0",
+    "react-native": "0.88.1",
+    "react-native-svg": "15.16.0"
+  },
+  "devDependencies": {
+    "@expo/ngrok": "^4.1.0",
+    "@types/react": "~19.3.0",
+    "typescript": "~6.0.3"
+  }
+}

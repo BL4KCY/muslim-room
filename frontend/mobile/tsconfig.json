@@ -1,0 +1,23 @@
+{
+  "extends": "./node_modules/expo/tsconfig.base.json",
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "jsx": "react-native",
+    "strict": true,
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "react-native": [
+        "./node_modules/react-native/types_generated/index.d.ts"
+      ]
+    }
+  },
+  "include": [
+    "App.tsx",
+    "src"
+  ]
+}

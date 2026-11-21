@@ -1,0 +1,107 @@
+openapi: 3.0.3
+info:
+  title: Quran Room (Al-Majlis) API Contract
+  version: 1.0.0
+  description: >
+    Single source of truth OpenAPI specification for Quran Room (Part A Identity,
+    Part B Real-time Surah Vote & Khatmah Playlist Editor, Part C Web & Mobile clients).
+servers:
+  - url: http://127.0.0.1:3000/v1
+    description: Local Node.js + Socket.IO Server (Bound to localhost)
+  - url: http://127.0.0.1:4010
+    description: Prism Mock Server
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    XPlatform:
+      in: header
+      name: X-Platform
+      required: true
+      schema:
+        type: string
+        enum: [web, ios, android]
+    XDevice:
+      in: header
+      name: X-Device
+      required: true
+      schema:
+        type: string
+        format: uuid
+    XAppVersion:
+      in: header
+      name: X-App-Version
+      required: true
+      schema:
+        type: string
+    XRequestId:
+      in: header
+      name: X-Request-Id
+      required: true
+      schema:
+        type: string
+        format: uuid
+  schemas:
+    StandardError:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code:
+              type: string
+              example: VOTE_ALREADY_EXISTS
+            message:
+              type: string
+              example: You have already cast a vote for this Surah in the active Majlis.
+paths:
+  /auth/register:
+    post:
+      summary: Register a new Quran Room account
+      responses:
+        '201':
+          description: Account created and verification email dispatched
+  /auth/login:
+    post:
+      summary: Authenticate with email & password or OAuth provider token
+      responses:
+        '200':
+          description: Short-lived JWT access token + HttpOnly refresh cookie
+  /events:
+    get:
+      summary: List public and invited Majlis recitation rooms
+      responses:
+        '200':
+          description: Array of Majlis rooms
+  /events/{eventId}/votes:
+    post:
+      summary: Suggest or vote for a Surah recitation in a Majlis room
+      responses:
+        '200':
+          description: Updated ordered queue
+        '403':
+          description: License check failed (place_and_time Haversine distance or invited_only)
+        '409':
+          description: Duplicate vote rejected by composite primary key (event_track_id, user_id)
+  /playlists/{playlistId}/tracks:
+    patch:
+      summary: Move, add, or remove a Surah in a Khatmah playlist (requires Muhsin premium plan)
+      responses:
+        '200':
+          description: New playlist state with incremented version counter
+        '403':
+          description: Requires Muhsin (premium) plan
+        '409':
+          description: Version conflict; client must refetch state
+  /beacons/{uuid}/event:
+    get:
+      summary: Resolve a nearby Masjid iBeacon UUID to its public Majlis event room
+      responses:
+        '200':
+          description: Public Majlis event metadata
+
