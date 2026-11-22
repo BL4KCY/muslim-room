@@ -2,9 +2,13 @@ from typing import Annotated
 
 import jwt
 from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer, SecurityScopes
+from fastapi.security import (
+  OAuth2AuthorizationCodeBearer,
+  OAuth2PasswordBearer,
+  SecurityScopes,
+)
 from jwt.exceptions import InvalidTokenError
-from pydantic import ValidationError
+from pydantic import EmailStr, ValidationError
 from sqlmodel import select
 
 from app.core.config import get_settings
@@ -13,34 +17,47 @@ from app.dependences import SessionDep
 from app.modules.auth.schema import TokenData
 from app.modules.users.model import User
 from app.modules.users.schema import UserCreate, UserResponse
+from app.modules.users.types import JoinMethod
+
+
+def get_user_by_email(email: EmailStr, session: SessionDep) -> User:
+  statement = select(User).where(User.email == email)
+  return session.exec(statement).first()
+
+
+def get_user_by_username(email: EmailStr, session: SessionDep) -> User:
+  statement = select(User).where(User.email == email)
+  return session.exec(statement).first()
 
 
 def check_user_existing(user_create: UserCreate, session: SessionDep):
   # email check
-  statement = select(User).where(User.email == user_create.email)
-  existing_user = session.exec(statement).first()
-  if existing_user:
+  if get_user_by_email(user_create.email, session):
     raise HTTPException(
       status.HTTP_409_CONFLICT,
       detail=f"email: {user_create.email} already registered",
     )
   # username check
-  statement = select(User).where(User.username == user_create.username)
-  existing_user = session.exec(statement).first()
-  if existing_user:
+  if get_user_by_username(user_create.username, session):
     raise HTTPException(
       status.HTTP_409_CONFLICT,
       detail=f"username: {user_create.username} already registered",
     )
 
 
-def create_new_user(user_create: UserCreate, session: SessionDep):
-  # check if the user already exists
-  check_user_existing(user_create, session)
-  # create new user in db
+def create_new_user(
+  user_create: UserCreate, session: SessionDep, join_by: JoinMethod
+) -> UserResponse:
+  is_join_by_pass = join_by == JoinMethod.PASSWORD_OAUTH
+
+  if is_join_by_pass:
+    check_user_existing(user_create, session)
+
   new_userdb = User(
     **user_create.model_dump(exclude={"password"}),
-    hashed_password=hash_password(user_create.password),
+    hashed_password=hash_password(user_create.password) if is_join_by_pass else None,
+    is_verified=not is_join_by_pass,
+    join_method=join_by,
   )
   session.add(new_userdb)
   session.commit()
@@ -53,7 +70,16 @@ def create_new_user(user_create: UserCreate, session: SessionDep):
 oauth2_scheme = OAuth2PasswordBearer(
   tokenUrl="/api/v1/auth/token",
   scopes={"me": "Read information about the current user.", "items": "Read items."},
+  auto_error=False
 )
+
+oauth2_scheme_google = OAuth2AuthorizationCodeBearer(
+  authorizationUrl="https://google.com",
+  tokenUrl="/api/v1/auth/google/callback",
+  scheme_name="Google Login",
+  auto_error=False,
+)
+
 settings = get_settings()
 
 
