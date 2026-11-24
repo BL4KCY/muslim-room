@@ -16,6 +16,7 @@ class Settings(BaseSettings):
   app_version: str = "1.0.0"
   debug: bool = True
   enviroment: str = "production"
+  session_secret: str
 
   # Database
   database_url: str = "postgresql://postgres:example@localhost:5432/postgres"
@@ -27,6 +28,10 @@ class Settings(BaseSettings):
   algorithm: str = "HS256"
   access_token_expaire_mintutes: int = 30
   refresh_token_expaire_days: int = 7
+
+  google_client_id: str
+  google_client_secret: str
+  google_redirect_uri: str
 
   # External Services
   redis_url: str = "redis://localhost:6379/0"

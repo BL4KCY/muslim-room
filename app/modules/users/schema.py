@@ -1,13 +1,17 @@
 from pydantic import BaseModel, EmailStr
 
+from app.modules.users.types import FullName, Username
+
 
 class UserBase(BaseModel):
-  username: str
+  picture_url: str | None = None
+  fullname: FullName
+  username: Username | None = None
   email: EmailStr
 
 
 class UserCreate(UserBase):
-  password: str
+  password: str | None
 
 
 class UserResponse(UserBase):
