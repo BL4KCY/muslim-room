@@ -19,7 +19,7 @@ class Settings(BaseSettings):
   session_secret: str
 
   # Database
-  database_url: str = "postgresql://postgres:example@localhost:5432/postgres"
+  database_url: str
   # database_pool_size: int = 20
   # database_max_overflow: int = 10
 

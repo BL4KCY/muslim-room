@@ -3,13 +3,11 @@ from starlette.middleware.sessions import SessionMiddleware
 
 from app.api.router import router as api_router
 from app.core.config import get_settings
-from app.db.database import create_db_and_tables
 
 
 def lifespan(app: FastAPI):
-
   # Startup
-  create_db_and_tables()
+
 
   yield
   # Shutdown
