@@ -27,7 +27,7 @@ def get_token(
     raise credentials_exception
   return Token(
     access_token=create_access_token(
-      {"sub": userdb.username, "scopes": user_form.scopes},
+      {"sub": userdb.username, "uid": userdb.id, "scopes": user_form.scopes},
     ),
     token_type="bearer",
   )
